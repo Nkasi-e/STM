@@ -1,6 +1,13 @@
-
-from fastapi import FastAPI, Path, Query
+from fastapi import FastAPI
 from api import users, sections, courses
+
+from db.db_setup import engine
+from db.models import course, user
+
+
+# creating DB connection
+user.Base.metadata.create_all(bind=engine)
+course.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title = "Common Books",

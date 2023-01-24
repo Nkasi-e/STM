@@ -1,5 +1,5 @@
 import enum
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Enum, Text, Sequence
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Enum, Text
 from sqlalchemy.orm import relationship
 
 from ..db_setup import Base
@@ -7,18 +7,22 @@ from .mixins import Timestamp
 
 
 
-class Role(enum.Enum):
-    admin = "admin"
-    student = "student"
+class Role(enum.IntEnum):
+    admin = 1
+    student = 2
     
     
 class User(Timestamp, Base):
     __tablename__ = 'users'
     
-    id = Column(Integer, Sequence('user_id_seq'), primary_key=True, index=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     email = Column(String(255), unique=True, index=True, nullable=False)
     role = Column(Enum(Role))
+    
+    
     profile = relationship("Profile", back_populates="owner", uselist=False)
+    student_courses = relationship("StudentCourse", back_populates="student")
+    student_content_blocks = relationship("CompletedContentBlock", back_populates="student")
     
 class Profile(Timestamp, Base):
     __tablename__ = 'profile'

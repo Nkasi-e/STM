@@ -1,12 +1,14 @@
+from typing import Optional
 from pydantic import BaseModel
 from datetime import datetime
 
-class UserBase(BaseModel):
+class UserCreate(BaseModel):
     email: str
     role: int
-    
-class User(UserBase):
-    id: int
+
+# class for Data response
+class User(UserCreate):
+    id: Optional[int]
     created_at: datetime
     updated_at: datetime
     

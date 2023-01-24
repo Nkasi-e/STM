@@ -12,7 +12,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, futu
 
 Base = declarative_base()
 
-#DB Utilities
+# Dependency
 def get_db():
     db = SessionLocal()
     try:

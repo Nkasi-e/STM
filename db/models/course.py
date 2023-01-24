@@ -24,7 +24,7 @@ class Course(Timestamp, Base):
     description = Column(Text, nullable=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     created_by = relationship(User)
-    sections = relationship('Section', back_populates='course', uselist=False)
+    section = relationship('Section', back_populates='course', uselist=False)
     student_courses = relationship('StudentCourse', back_populates='course')
 
 
@@ -36,8 +36,8 @@ class Section(Timestamp, Base):
     description = Column(String, nullable=True)
     course_id = Column(Integer, ForeignKey('courses.id'), nullable=False)
     
-    course = relationship("Course", back_populates='sections')
-    content_blocks = relationship("ContentBlocks", back_populates = 'section')
+    course = relationship("Course", back_populates='section')
+    content_blocks = relationship("ContentBlock", back_populates = 'section')
 
 
 class ContentBlock(Timestamp, Base):

@@ -1,20 +1,27 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select 
 
 from db.models.user import User
 from db.models.course import Course
 from pydantic_schemas.user_schema import UserCreate
 
 # Get user by ID - Controller
-def get_user_by_id(db: Session, user_id: int):
-    return db.query(User).filter(User.id == user_id).first()
+async def get_user_by_id(db: AsyncSession, user_id: int):
+    query = select(User).where(User.id == user_id)
+    result = await db.execute(query)
+    return result.scalar_one()
 
 # Get user by email - Controller
 def get_user_by_email(db: Session, email: str):
-    return db.query(User).filter(User.email == email).first()
+    query = db.query(User).filter(User.email == email).first()
+    return query
 
 # GEtting all the users in the db - Controller
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(User).offset(skip).limit(limit).all()
+async def get_users(db: AsyncSession):
+    query = select(User).order_by(User.id)
+    result = await db.execute(query)
+    return result.scalars().all()
 
 # Create User Controller
 def create_user(db: Session, user: UserCreate):

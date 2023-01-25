@@ -1,10 +1,11 @@
 from typing import Optional, List
 
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException
 import fastapi
 
-from db.db_setup import get_db
+from db.db_setup import get_db, async_get_db
 from api.utils.users import *
 from pydantic_schemas.user_schema import *
 
@@ -19,10 +20,11 @@ async def root():
 
 # Get all users route
 @router.get('/users', status_code=200)
-async def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = get_users(db, skip=skip, limit=limit)
+async def read_users( db: AsyncSession = Depends(async_get_db)):
+    users = await get_users(db)
     return {"All User": users}
 
+# create new user route
 @router.post('/user', status_code=201)
 async def create_user_route(user: UserCreate, db: Session = Depends(get_db)):
     existing_user = get_user_by_email(db, user.email)
@@ -34,9 +36,10 @@ async def create_user_route(user: UserCreate, db: Session = Depends(get_db)):
     new_user = create_user(db, user)
     return {"data": new_user}
 
+# Getting user by Id route
 @router.get('/user/{user_id}')
-async def read_user_by_id(user_id: int, db: Session = Depends(get_db)):
-    user = get_user_by_id(db, user_id)
+async def read_user_by_id(user_id: int, db: AsyncSession = Depends(async_get_db)):
+    user = await get_user_by_id(db, user_id)
     if user is None:
         raise HTTPException(
             status_code = 404,
@@ -44,7 +47,7 @@ async def read_user_by_id(user_id: int, db: Session = Depends(get_db)):
         )
     return user
 
-# get all courses belonging to a specific user
+# get all courses belonging to a specific user route
 @router.get('/user/{user_id}/courses')
 async def read_user_courses(user_id: int, db: Session = Depends(get_db)):
     courses = get_user_courses(user_id, db)

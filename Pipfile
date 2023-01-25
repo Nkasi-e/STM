@@ -12,8 +12,12 @@ psycopg2 = "*"
 psycopg2-binary = "*"
 sqlalchemy-utils = "*"
 alembic = "*"
+asyncpg = "*"
 
 [dev-packages]
+flake8 = "*"
+black = "*"
+pre-commit = "*"
 
 [requires]
 python_version = "3.10"
